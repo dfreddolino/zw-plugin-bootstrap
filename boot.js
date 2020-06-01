@@ -1406,3 +1406,5 @@ success: true
 
 // store as global
 window["zw"] = zw;
+
+console.log("Plugin - Boot.js ran");
