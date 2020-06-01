@@ -1,5 +1,12 @@
 // This is the boot code for the Zipwhip Plugins
 
+// Need to load JQuery first
+console.log("Plugin - Loading JQuery...");
+var script = document.createElement('script');
+script.setAttribute('src', 'http://code.jquery.com/jquery-3.4.1.min.js');
+script.setAttribute('type', 'text/javascript');
+console.log("Plugin - JQuery loaded...");
+
 // This is the object that eventually Zipwhip core engineering should expose to us
 // These are methods we will need for our plugins to function
 var zw = {
@@ -1408,3 +1415,8 @@ success: true
 window["zw"] = zw;
 
 console.log("Plugin - Boot.js ran");
+
+// Now check the app store for which plugins this user has installed
+// Download the jsUrl for each plugin and run its onLoad method
+console.log("Plugin - Now checking app store for installed plugins for this user...");
+
