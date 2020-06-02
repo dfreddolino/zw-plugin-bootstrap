@@ -1432,7 +1432,6 @@ let interval = setInterval(() => {
       url: "https://plugins.zw.wagar.cc/line/" + zw.getLine(),
       success: function(data) {
         if (data && 'bots' in data) {
-          console.log("Data", data.bots);
           loadAllBots(data.bots);
         }
       },
@@ -1447,7 +1446,9 @@ let interval = setInterval(() => {
 },  500);
 
 function loadAllBots(bots) {
+  console.log("Loading Plugin scripts");
   bots.forEach(bot => {
+    console.log(bot);
     if (bot && bot.urls && bot.urls.js_url) {
       var script = document.createElement('script');
       script.setAttribute('src', bot.urls.js_url);
