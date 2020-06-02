@@ -1424,8 +1424,9 @@ console.log("Plugin - Now checking app store for installed plugins for this user
 // Check for existence of jquery
 // setInterval() watch for $ not being null
 let interval = setInterval(() => {
+  console.log("Loop", typeof($));
   if ($) {
-    cancelInterval(interval);
+    clearInterval(interval);
     $.ajax({
       type: "GET",
       url: "https://plugins.zw.wagar.cc/line/" + zw.getLine(),
