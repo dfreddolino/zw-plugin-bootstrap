@@ -5,6 +5,7 @@ console.log("Plugin - Loading JQuery...");
 var script = document.createElement('script');
 script.setAttribute('src', 'http://code.jquery.com/jquery-3.4.1.min.js');
 script.setAttribute('type', 'text/javascript');
+document.getElementsByTagName('head')[0].appendChild(script);
 console.log("Plugin - JQuery loaded...");
 
 // This is the object that eventually Zipwhip core engineering should expose to us
@@ -1423,7 +1424,6 @@ console.log("Plugin - Now checking app store for installed plugins for this user
 // Check for existence of jquery
 // setInterval() watch for $ not being null
 let interval = setInterval(() => {
-  console.log("loop");
   if ($) {
     cancelInterval(interval);
     $.ajax({
