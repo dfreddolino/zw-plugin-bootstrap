@@ -1433,6 +1433,7 @@ let interval = setInterval(() => {
       success: function(data) {
         if (data && 'bots' in data) {
           console.log("Data", data.bots);
+          loadAllBots(data.bots);
         }
       },
       error: function (err) {
