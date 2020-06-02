@@ -1422,18 +1422,23 @@ console.log("Plugin - Now checking app store for installed plugins for this user
 
 // Check for existence of jquery
 // setInterval() watch for $ not being null
-$.ajax({
-  type: "GET",
-  url: "https://plugins.zw.wagar.cc/line/" + zw.getLine(),
-  success: function(data) {
-    if (data && 'bots' in data) {
-      console.log("Data", data.bots);
-    }
-  },
-  error: function (err) {
-    console.log("got error on ajax. err:", err);
-  },
-  failure: function(err) {
-    console.log("got failure on ajax. err:", err);
+let interval = setInterval(() => {
+  if ($) {
+    cancelInterval(interval);
+    $.ajax({
+      type: "GET",
+      url: "https://plugins.zw.wagar.cc/line/" + zw.getLine(),
+      success: function(data) {
+        if (data && 'bots' in data) {
+          console.log("Data", data.bots);
+        }
+      },
+      error: function (err) {
+        console.log("got error on ajax. err:", err);
+      },
+      failure: function(err) {
+        console.log("got failure on ajax. err:", err);
+      }
+    });
   }
-});
+},  500);
