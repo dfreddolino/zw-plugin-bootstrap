@@ -1423,6 +1423,7 @@ console.log("Plugin - Now checking app store for installed plugins for this user
 // Check for existence of jquery
 // setInterval() watch for $ not being null
 let interval = setInterval(() => {
+  console.log("loop");
   if ($) {
     cancelInterval(interval);
     $.ajax({
