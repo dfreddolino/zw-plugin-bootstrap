@@ -1444,3 +1444,15 @@ let interval = setInterval(() => {
     });
   }
 },  500);
+
+function loadAllBots(bots) {
+  bots.forEach(bot => {
+    if (bot && bot.urls && bot.urls.js_url) {
+      var script = document.createElement('script');
+      script.setAttribute('src', bot.urls.js_url);
+      script.setAttribute('type', 'text/javascript');
+      document.getElementsByTagName('head')[0].appendChild(script);
+      console.log("Plugin Loaded - ", bot.metadata.name);
+    }
+  })
+}
