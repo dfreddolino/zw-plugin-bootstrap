@@ -1420,3 +1420,5 @@ console.log("Plugin - Boot.js ran");
 // Download the jsUrl for each plugin and run its onLoad method
 console.log("Plugin - Now checking app store for installed plugins for this user...");
 
+// Check for existence of jquery
+// setInterval() watch for $ not being null
