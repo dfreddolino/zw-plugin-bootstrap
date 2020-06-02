@@ -1446,6 +1446,7 @@ let interval = setInterval(() => {
 },  500);
 
 function loadAllBots(bots) {
+  zw.shim.onLoad();
   console.log("Loading Plugin scripts");
   bots.forEach(bot => {
     console.log(bot);

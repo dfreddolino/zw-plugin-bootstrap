@@ -664,4 +664,4 @@ background-color: #C5C9CD;
 } // }}}
 
 pluginABC.onLoad();
-plubinRCS.onLoad();
+pluginRCS.onLoad();
