@@ -14,8 +14,6 @@ setTimeout(function() {
     console.log("Plugin - Bootsrapper running...");
 
     var script = document.createElement('script');
-    //script.setAttribute('src', 'https://raw.githubusercontent.com/chilipeppr/zw-plugin-bootstrap/master/boot.js');
-    //script.setAttribute('type', 'text/javascript');
 
     var xhr = new XMLHttpRequest();
 
