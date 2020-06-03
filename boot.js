@@ -3,7 +3,7 @@
 // Need to load JQuery first
 console.log("Plugin - Loading JQuery...");
 var script = document.createElement('script');
-script.setAttribute('src', 'http://code.jquery.com/jquery-3.4.1.min.js');
+script.setAttribute('src', 'https://code.jquery.com/jquery-3.4.1.min.js');
 script.setAttribute('type', 'text/javascript');
 document.getElementsByTagName('head')[0].appendChild(script);
 console.log("Plugin - JQuery loaded...");
