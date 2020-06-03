@@ -638,7 +638,7 @@ background: transparent;
         }
 
         // since using GET for now to solve https issues, build GET url
-        var url = "http://178.128.129.151:8080/function/translate/langList";
+        var url = "https://plugins.zw.wagar.cc/function/translate/langList";
         console.log("url to call:", url);
 
         // do ajax query and get results. based on the results i'll render shit.
@@ -676,7 +676,7 @@ background: transparent;
         var line = encodeURIComponent(zw.getLine());
         console.log("line:", line);
         var session = encodeURIComponent(zw.getSessionKey());
-        var url = "http://178.128.129.151:8080/function/translate/get?line=" + line + "&contactId=" + contactId + "&session=" + session;
+        var url = "https://plugins.zw.wagar.cc/function/translate/get?line=" + line + "&contactId=" + contactId + "&session=" + session;
         console.log("url to call:", url);
 
         // do ajax query and get results.
@@ -714,7 +714,7 @@ background: transparent;
         var line = encodeURIComponent(zw.getLine());
         console.log("line:", line);
         var session = encodeURIComponent(zw.getSessionKey());
-        var url = "http://178.128.129.151:8080/function/translate/set?line=" + line + "&contactId=" + contactId + "&locale=" + locale + "&state=" + state + "&session=" + session;
+        var url = "https://plugins.zw.wagar.cc/function/translate/set?line=" + line + "&contactId=" + contactId + "&locale=" + locale + "&state=" + state + "&session=" + session;
         console.log("url to call:", url);
 
         // do ajax query and get results.
@@ -783,7 +783,7 @@ background: transparent;
 
         // since using GET for now to solve https issues, build GET url
         var url = "";
-        var param = "http://178.128.129.151:8080/function/translate/keypress?";
+        var param = "https://plugins.zw.wagar.cc/function/translate/keypress?";
         param = param + "line=" + encodeURIComponent(zw.getLine());
         param = param + "&body=" + encodeURIComponent(composeBoxTextAreaEl.val());
         param = param + "&contactId=" + encodeURIComponent(dataContactId);
