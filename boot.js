@@ -1429,6 +1429,14 @@ function loadAllBots(bots) {
     console.log(bot);
     if (bot && bot.urls && bot.urls.js_url) {
 
+      var script = document.createElement('script');
+      // script.text = "//" + bot.urls.js_url + "\n\n" + data;
+      script.setAttribute('src', bot.urls.js_url);
+      script.setAttribute('type', 'text/javascript');
+      document.getElementsByTagName('head')[0].appendChild(script);
+      console.log("Plugin Loaded - ", bot.metadata.name);
+      
+      /*
       // cache buster
       let ts = new Date().getTime();
       let url = bot.urls.js_url + "?ts=" + ts;
@@ -1454,6 +1462,7 @@ function loadAllBots(bots) {
           console.log("got error on ajax. err:", err);
         },
       });
+      */
 
       
     }
