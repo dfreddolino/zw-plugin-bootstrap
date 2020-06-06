@@ -1421,9 +1421,58 @@ console.log("Plugin - Boot.js ran");
 // Download the jsUrl for each plugin and run its onLoad method
 console.log("Plugin - Now checking app store for installed plugins for this user...");
 
+// Load all of the plugins 
+function loadAllBots(bots) {
+  zw.shim.onLoad();
+  console.log("Loading Plugin scripts");
+  bots.forEach(function(bot) {
+    console.log(bot);
+    if (bot && bot.urls && bot.urls.js_url) {
+
+      var script = document.createElement('script');
+      // script.text = "//" + bot.urls.js_url + "\n\n" + data;
+      script.setAttribute('src', bot.urls.js_url);
+      script.setAttribute('type', 'text/javascript');
+      document.getElementsByTagName('head')[0].appendChild(script);
+      console.log("Plugin Loaded - ", bot.metadata.name);
+      
+      /*
+      // cache buster
+      let ts = new Date().getTime();
+      let url = bot.urls.js_url + "?ts=" + ts;
+      console.log("Plugin - Url being retrieved:", url);
+      // ajax retrieve the document
+      $.ajax({
+        type: "GET",
+        url: url,
+        success: function(data) {
+          if (data) {
+
+            // Put the script inline in a script tag in the DOM to avoid
+            // any caching issues and to avoid meta-type issues
+            var script = document.createElement('script');
+            script.text = "//" + bot.urls.js_url + "\n\n" + data;
+            //script.setAttribute('src', bot.urls.js_url);
+            //script.setAttribute('type', 'text/javascript');
+            document.getElementsByTagName('head')[0].appendChild(script);
+            console.log("Plugin Loaded - ", bot.metadata.name);
+          }
+        },
+        error: function (err) {
+          console.log("got error on ajax. err:", err);
+        },
+      });
+      */
+
+      
+    }
+  })
+}
+
+
 // Check for existence of jquery
 // setInterval() watch for $ not being null
-let interval = setInterval(() => {
+let interval = setInterval(function() {
   console.log("Loop", typeof($));
   if ($) {
     clearInterval(interval);
@@ -1438,9 +1487,6 @@ let interval = setInterval(() => {
       error: function (err) {
         console.log("got error on ajax. err:", err);
       },
-      failure: function(err) {
-        console.log("got failure on ajax. err:", err);
-      }
     });
   }
 },  500);
