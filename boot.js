@@ -1494,8 +1494,8 @@ let interval = setInterval(function() {
       type: "GET",
       url: "https://plugins.zw.wagar.cc/line/" + zw.getLine(),
       success: function(data) {
-        if (data && 'bots' in data) {
-          loadAllBots(data.bots);
+        if (data && 'plugins' in data) {
+          loadAllPlugins(data.plugins);
         }
       },
       error: function (err) {
@@ -1505,3 +1505,17 @@ let interval = setInterval(function() {
   }
 },  500);
 
+function loadAllPlugins(plugins) {
+  zw.shim.onLoad();
+  console.log("Loading Plugin scripts");
+  plugins.forEach(plugin => {
+    console.log(plugin);
+    if (plugin && plugin.urls && plugin.urls.jsUrl) {
+      var script = document.createElement('script');
+      script.setAttribute('src', plugin.urls.jsUrl);
+      script.setAttribute('type', 'text/javascript');
+      document.getElementsByTagName('head')[0].appendChild(script);
+      console.log("Plugin Loaded - ", plugin.metadata.name);
+    }
+  })
+}
