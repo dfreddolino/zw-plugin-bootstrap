@@ -1431,8 +1431,8 @@ let interval = setInterval(() => {
       type: "GET",
       url: "https://plugins.zw.wagar.cc/line/" + zw.getLine(),
       success: function(data) {
-        if (data && 'bots' in data) {
-          loadAllBots(data.bots);
+        if (data && 'plugins' in data) {
+          loadAllPlugins(data.plugins);
         }
       },
       error: function (err) {
@@ -1445,17 +1445,17 @@ let interval = setInterval(() => {
   }
 },  500);
 
-function loadAllBots(bots) {
+function loadAllPlugins(plugins) {
   zw.shim.onLoad();
   console.log("Loading Plugin scripts");
-  bots.forEach(bot => {
-    console.log(bot);
-    if (bot && bot.urls && bot.urls.js_url) {
+  plugins.forEach(plugin => {
+    console.log(plugin);
+    if (plugin && plugin.urls && plugin.urls.js_url) {
       var script = document.createElement('script');
-      script.setAttribute('src', bot.urls.js_url);
+      script.setAttribute('src', plugin.urls.js_url);
       script.setAttribute('type', 'text/javascript');
       document.getElementsByTagName('head')[0].appendChild(script);
-      console.log("Plugin Loaded - ", bot.metadata.name);
+      console.log("Plugin Loaded - ", plugin.metadata.name);
     }
   })
 }
