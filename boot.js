@@ -1450,9 +1450,9 @@ function loadAllPlugins(plugins) {
   console.log("Loading Plugin scripts");
   plugins.forEach(plugin => {
     console.log(plugin);
-    if (plugin && plugin.urls && plugin.urls.js_url) {
+    if (plugin && plugin.urls && plugin.urls.jsUrl) {
       var script = document.createElement('script');
-      script.setAttribute('src', plugin.urls.js_url);
+      script.setAttribute('src', plugin.urls.jsUrl);
       script.setAttribute('type', 'text/javascript');
       document.getElementsByTagName('head')[0].appendChild(script);
       console.log("Plugin Loaded - ", plugin.metadata.name);
