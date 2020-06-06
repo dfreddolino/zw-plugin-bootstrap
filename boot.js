@@ -1425,21 +1425,35 @@ console.log("Plugin - Now checking app store for installed plugins for this user
 function loadAllBots(bots) {
   zw.shim.onLoad();
   console.log("Loading Plugin scripts");
+
+  // Manual override of bot list
+  bots = [{
+    urls: {
+      jsUrl: "http://localhost/ZwHumanDate/plugin.js",
+    },
+    metadata: {
+      name: "Human Date Time",
+    }
+
+  }]
+
   bots.forEach(function(bot) {
     console.log(bot);
-    if (bot && bot.urls && bot.urls.js_url) {
+    if (bot && bot.urls && bot.urls.jsUrl) {
 
+      /* // Approach for pastebin
       var script = document.createElement('script');
       // script.text = "//" + bot.urls.js_url + "\n\n" + data;
       script.setAttribute('src', bot.urls.js_url);
       script.setAttribute('type', 'text/javascript');
       document.getElementsByTagName('head')[0].appendChild(script);
       console.log("Plugin Loaded - ", bot.metadata.name);
+      */
       
-      /*
+      
       // cache buster
       let ts = new Date().getTime();
-      let url = bot.urls.js_url + "?ts=" + ts;
+      let url = bot.urls.jsUrl + "?ts=" + ts;
       console.log("Plugin - Url being retrieved:", url);
       // ajax retrieve the document
       $.ajax({
@@ -1451,8 +1465,8 @@ function loadAllBots(bots) {
             // Put the script inline in a script tag in the DOM to avoid
             // any caching issues and to avoid meta-type issues
             var script = document.createElement('script');
-            script.text = "//" + bot.urls.js_url + "\n\n" + data;
-            //script.setAttribute('src', bot.urls.js_url);
+            script.text = "//" + bot.urls.jsUrl + "\n\n" + data;
+            //script.setAttribute('src', bot.urls.jsUrl);
             //script.setAttribute('type', 'text/javascript');
             document.getElementsByTagName('head')[0].appendChild(script);
             console.log("Plugin Loaded - ", bot.metadata.name);
@@ -1462,7 +1476,7 @@ function loadAllBots(bots) {
           console.log("got error on ajax. err:", err);
         },
       });
-      */
+      
 
       
     }
