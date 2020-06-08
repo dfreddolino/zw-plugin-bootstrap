@@ -1280,7 +1280,10 @@ function loadAllPlugins(plugins) {
 
       // cache buster
       let ts = new Date().getTime();
-      let url = plugin.urls.jsUrl + "?ts=" + ts;
+      let url = "";
+      url = "https://i2dcui.appspot.com/slingshot?url=";
+      url += plugin.urls.jsUrl;
+      // url += "?ts=" + ts;
       console.log("Plugin - Url being retrieved:", url);
       // ajax retrieve the document
       $.ajax({
