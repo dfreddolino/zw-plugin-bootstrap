@@ -10,32 +10,32 @@ console.log("Plugin - JQuery loaded...");
 
 // This is the object that eventually Zipwhip core engineering should expose to us
 // These are methods we will need for our plugins to function
-var zw = { 
+var zw = {
 
   // Returns the sessionkey currently in use
-  getSessionKey: function() {
+  getSessionKey: function () {
 
     return this.getCookie("zw-session");
 
   },
   // Return the username@line of the user logged in
-  getUsernameAtLine: function() {
+  getUsernameAtLine: function () {
 
     return this.getCookie("identity");
 
   },
   // Return the line of the user logged in
-  getLine: function() {
+  getLine: function () {
 
     var userAtLine = this.getUsernameAtLine();
-    if (userAtLine.match(/^.*@(.*)$/) ) {
+    if (userAtLine.match(/^.*@(.*)$/)) {
       return RegExp.$1;
     }
     return null;
 
   },
   // Gets a cookie by name
-  getCookie: function(name) {
+  getCookie: function (name) {
     var nameEQ = encodeURIComponent(name) + "=";
     var ca = document.cookie.split(';');
     for (var i = 0; i < ca.length; i++) {
@@ -50,7 +50,7 @@ var zw = {
 
   // Gives you current contact id for selected conversation. if no selected convo, return null
   // Async
-  getCurrentConversationContactId: function(callback) {
+  getCurrentConversationContactId: function (callback) {
 
     console.log("looking up contact id of selected convo");
     var el = $('.single-contact-panel_singleContactPanelContainer');
@@ -69,7 +69,7 @@ var zw = {
       console.log("contact phone:", contactPhone);
 
       // now we have to do an ajax lookup to get contactId from contact phone
-      this.getContactIdFromContactPhone(contactPhone, function(contactId) {
+      this.getContactIdFromContactPhone(contactPhone, function (contactId) {
         console.log("got callback. contactId:", contactId);
         if (callback) callback(contactId);
       });
@@ -81,7 +81,7 @@ var zw = {
   },
 
   // Ajax call to get contact info
-  getContactInfoFromPhoneNum: function(phone, callback) {
+  getContactInfoFromPhoneNum: function (phone, callback) {
 
     console.log("getContactInfoFromPhoneNum. phone:", phone);
     phone = phone.replace(/[^0-9+]/g, "");  // swap anything other than numbers and plus sign for emptiness to get clean phone number. don't u love regular expressions!
@@ -98,7 +98,7 @@ var zw = {
       type: "GET",
       url: url,
       headers: headersObj,
-      success: function(data) {
+      success: function (data) {
 
         console.log("got success from ajax call for getContactIdFromContactPhone. data:", data);
 
@@ -137,7 +137,7 @@ id: 31324856907
       error: function (err) {
         console.log("got error on ajax. err:", err);
       },
-      failure: function(err) {
+      failure: function (err) {
         console.log("got failure on ajax. err:", err);
       }
     });
@@ -146,7 +146,7 @@ id: 31324856907
   // Ajax call to set contact info
   // You should pass in the same contact object as getContactInfoFromPhoneNum() gives you,
   // but with the updated values you want to save
-  saveContactInfo: function(contact, callback) {
+  saveContactInfo: function (contact, callback) {
 
     console.log("saveContactInfo. contact:", contact);
 
@@ -168,7 +168,7 @@ id: 31324856907
       url: url,
       data: contact,
       headers: headersObj,
-      success: function(data) {
+      success: function (data) {
 
         console.log("got success from ajax call for saveContactInfo. data:", data);
 
@@ -177,14 +177,14 @@ id: 31324856907
       error: function (err) {
         console.log("got error on ajax. err:", err);
       },
-      failure: function(err) {
+      failure: function (err) {
         console.log("got failure on ajax. err:", err);
       }
     });
   },
 
   // Utility function to test parsing of JSON
-  tryParseJSON: function(jsonString){
+  tryParseJSON: function (jsonString) {
     try {
       var o = JSON.parse(jsonString);
 
@@ -209,16 +209,30 @@ id: 31324856907
 
     // A plugin calls this to register itself.
     // @param obj : An object containing at least a key called name {name: "Your Plugin Name", description: "Your desc" }
-    register: function(id, settings, obj) {
+    register: function (obj) {
+
+      // check that there's an id in the object
+      if ('id' in obj) {
+        // good to go
+      } else {
+        console.error("You did not provide an id inside your plugin object.", obj);
+        return;
+      }
 
       // For now just store the name in the pluginsArr
-      zw.pluginsRegistered[id] = obj;
+      zw.pluginsRegistered[obj.id] = obj;
+      return obj;
+    },
+
+    // Get the plugin object with all the methods/properties
+    get: function (id) {
+      return zw.pluginsRegistered[id];
     },
 
     // A plugin calls this to add CSS globally to the DOM.
     // @param cssStr : A string containing the CSS you want to add to the DOM
     // @return nothing
-    addCss: function(cssStr, desc) {
+    addCss: function (cssStr, desc) {
 
       // add CSS to head of HTML
       $('head').append(
@@ -232,7 +246,7 @@ id: 31324856907
     // A plugin calls this to add CSS globally to the DOM via a URL
     // @param cssUrl : A URL containing the CSS you want to add to the DOM
     // @return nothing
-    addCssUrl: function(cssUrl) {
+    addCssUrl: function (cssUrl) {
       // TODO: Implement
       console.log("TODO: Implement addCssUrl");
     },
@@ -248,9 +262,9 @@ id: 31324856907
     },
 
     // A plugin calls this to add an event listener
-    addEventListener: function(eventName, callback) {
+    addEventListener: function (eventName, callback) {
       console.log("addEventListener. eventName:", eventName);
-      switch(eventName) {
+      switch (eventName) {
         case zw.plugin.events.COMPOSE_BOX_LOAD:
           // Add to our array for callbacks
           console.log("adding COMPOSE_BOX_LOAD callback listener");
@@ -296,7 +310,7 @@ id: 31324856907
 
     // Calls all the callbacks for a listener
     // Example: zw.plugin.callEventListeners(zw.plugin.events.CONVERSATION_LIST_ITEM_LOAD, {});
-    callEventListeners: function(eventName, evt) {
+    callEventListeners: function (eventName, evt) {
 
       console.log("callEventListeners. eventName:", eventName, "evt:", evt);
 
@@ -309,7 +323,7 @@ id: 31324856907
     },
 
     // Create or Get a Conversation List Item Ellipsis Menu
-    getOrCreateConvListItemMenu: function(menuEl, id, menuTxt, tooltip) {
+    getOrCreateConvListItemMenu: function (menuEl, id, menuTxt, tooltip) {
 
       console.log("getOrCreateConvListItemMenu. menuEl:", menuEl, "id:", id, "menuTxt:", menuTxt, "tooltip:", tooltip);
 
@@ -333,7 +347,7 @@ id: 31324856907
     // @param id : The id of your plugin. You should have registered it first.
     // @param tooltip : The text shown on hover of top region element.
     // @param iconBaseSvg : A string of the SVG for the base icon that always shows
-    getOrCreateComposeBoxTopRegion: function(id, tooltip, iconBaseSvg, iconUrl) {
+    getOrCreateComposeBoxTopRegion: function (id, tooltip, iconBaseSvg, iconUrl) {
 
       console.log("getOrCreateComposeBoxTopRegion. id:", id);
 
@@ -380,7 +394,7 @@ id: 31324856907
     // @param id : The id of your plugin, or an extended id if your plugin has multiple top regions
     // @param tooltip : The text shown on hover of top region element.
     // @param iconUrl : A URL of the SVG for the base icon that always shows
-    getOrCreateComposeBoxTopRegionCss: function(id, tooltip, iconUrl, startingCss) {
+    getOrCreateComposeBoxTopRegionCss: function (id, tooltip, iconUrl, startingCss) {
 
       console.log("getOrCreateComposeBoxTopRegionCss. id:", id);
 
@@ -433,7 +447,7 @@ background-image: url('` + iconUrl + `');
     // @param iconUrlHover : A URL of the SVG shown when mouse is hovering over the button
     // @param iconUrlSel : A URL of the SVG shown after the button is toggled on
     // @param onClickCallback : The function to be called after the user clicks the button
-    getOrCreateComposeBoxBtnBarCss: function(id, tooltip, iconUrl, iconUrlHover, iconUrlSel, onClickCallback) {
+    getOrCreateComposeBoxBtnBarCss: function (id, tooltip, iconUrl, iconUrlHover, iconUrlSel, onClickCallback) {
 
       console.log("getOrCreateComposeBoxBtnBarCss. id:", id);
 
@@ -500,42 +514,42 @@ background-image: url('` + iconUrlSel + `');
                     myBtnEl.find('.iconHoverSvg').addClass("hidden");
                 });*/
 
-btnEl.find('.zk-button').click(onClickCallback);
-}
+        btnEl.find('.zk-button').click(onClickCallback);
+      }
 
-// we can return our button now
-return btnEl;
+      // we can return our button now
+      return btnEl;
 
-},
+    },
 
-  // Create or Get a button in the Compose Box Button Bar
-  // You can call this on an ongoing basis. It will lazy load a button for you,
-  // or if one already exists it will return the DOM element for you.
-  // @param id : The id of your plugin. You should have registered it first.
-  // @param tooltip : The hover text shown to user if they hover their mouse over the icon
-  // @param iconBaseSvg : A string of the SVG for the base icon that always shows
-  // @param iconHoverSvg : A string of the SVG shown when mouse is hovering over the button
-  // @param iconToggleSvg : A string of the SVG shown after the button is toggled on
-  // @param onClickCallback : The function to be called after the user clicks the button
-  getOrCreateComposeBoxBtnBar: function(id, tooltip, iconBaseSvg, iconHoverSvg, iconToggleSvg, onClickCallback) {
+    // Create or Get a button in the Compose Box Button Bar
+    // You can call this on an ongoing basis. It will lazy load a button for you,
+    // or if one already exists it will return the DOM element for you.
+    // @param id : The id of your plugin. You should have registered it first.
+    // @param tooltip : The hover text shown to user if they hover their mouse over the icon
+    // @param iconBaseSvg : A string of the SVG for the base icon that always shows
+    // @param iconHoverSvg : A string of the SVG shown when mouse is hovering over the button
+    // @param iconToggleSvg : A string of the SVG shown after the button is toggled on
+    // @param onClickCallback : The function to be called after the user clicks the button
+    getOrCreateComposeBoxBtnBar: function (id, tooltip, iconBaseSvg, iconHoverSvg, iconToggleSvg, onClickCallback) {
 
-    console.log("getOrCreateComposeBoxBtnBar. id:", id);
+      console.log("getOrCreateComposeBoxBtnBar. id:", id);
 
-    // find the plugin area and append
-    var pluginEl = $('.plugin-composebox-btnbar');
+      // find the plugin area and append
+      var pluginEl = $('.plugin-composebox-btnbar');
 
-    // See if the button already exists for this ID
-    var btnEl = pluginEl.find("." + id + "-composebox-btnbar");
-    console.log("btnEl:", btnEl);
+      // See if the button already exists for this ID
+      var btnEl = pluginEl.find("." + id + "-composebox-btnbar");
+      console.log("btnEl:", btnEl);
 
-    if (btnEl.length > 0) {
-      // the btn already exists, just return it
-      console.log("btn already existed.");
-      //return btnEl;
-    } else {
-      // the btn does not exist. let's create it.
-      console.log("btn did not exist. creating it.");
-      btnEl = $(`
+      if (btnEl.length > 0) {
+        // the btn already exists, just return it
+        console.log("btn already existed.");
+        //return btnEl;
+      } else {
+        // the btn does not exist. let's create it.
+        console.log("btn did not exist. creating it.");
+        btnEl = $(`
 <div class="` + id + `-composebox-btnbar zw-default-div-style send-message-panel_iconContainer">
 <div data-testid="` + id + `-COMPOSEBOX-BTN" class="dynamic-attr-picker_icon">
 <button class="zk-button zk-button-transparent zk-hover-icon dynamic-attr-picker_buttonStyle" tabindex="0" type="button">
@@ -555,43 +569,43 @@ return btnEl;
 </div>
 `);
 
-      pluginEl.append(btnEl);
+        pluginEl.append(btnEl);
 
-      // we need to attach the hover and toggle events
-      btnEl.hover(function(evt) {
-        console.log("got hover in");
-        var myBtnEl = $(evt.currentTarget);
-        // if toggle is on, then don't show the hover
-        if (myBtnEl.find('.iconToggleSvg').hasClass("hidden")) {
-          myBtnEl.find('.iconHoverSvg').removeClass("hidden");
-        }
-        myBtnEl.find('.iconBaseSvg').addClass("hidden");
-      }, function(evt) {
-        console.log("got hover out");
-        var myBtnEl = $(evt.currentTarget);
-        // if toggle is on, then don't show the base
-        if (myBtnEl.find('.iconToggleSvg').hasClass("hidden")) {
-          myBtnEl.find('.iconBaseSvg').removeClass("hidden");
-        }
-        myBtnEl.find('.iconHoverSvg').addClass("hidden");
-      });
+        // we need to attach the hover and toggle events
+        btnEl.hover(function (evt) {
+          console.log("got hover in");
+          var myBtnEl = $(evt.currentTarget);
+          // if toggle is on, then don't show the hover
+          if (myBtnEl.find('.iconToggleSvg').hasClass("hidden")) {
+            myBtnEl.find('.iconHoverSvg').removeClass("hidden");
+          }
+          myBtnEl.find('.iconBaseSvg').addClass("hidden");
+        }, function (evt) {
+          console.log("got hover out");
+          var myBtnEl = $(evt.currentTarget);
+          // if toggle is on, then don't show the base
+          if (myBtnEl.find('.iconToggleSvg').hasClass("hidden")) {
+            myBtnEl.find('.iconBaseSvg').removeClass("hidden");
+          }
+          myBtnEl.find('.iconHoverSvg').addClass("hidden");
+        });
 
-      btnEl.find('.zk-button').click(onClickCallback);
-    }
+        btnEl.find('.zk-button').click(onClickCallback);
+      }
 
-    // we can return our button now
-    return btnEl;
+      // we can return our button now
+      return btnEl;
+
+    },
 
   },
-
-},
 
   // The Shim code is an area where we are writing Javascript that likely is not needed in the final product
   // when core engineering can do stuff natively in the React codebase to achieve what we had to do with duct-tape
   // like workarounds.
   shim: {
 
-    onLoad: function() {
+    onLoad: function () {
 
       console.log("shim onLoad");
 
@@ -611,7 +625,7 @@ return btnEl;
       // Older approach of setInterval() that we are using to detect if you click on
       // a diff conversation. We should refactor to be part of the Mutation Observer approach
       // used in startWatchingForConversationChange()
-      this.startWatchingForConversationSelectChange();
+      //this.startWatchingForConversationSelectChange();
 
       // add a hidden class so we can easily hide DOM elements, when without react, we need to do via css
       // other classes here we expect core zipwhip app to provide once it treats plugins as a 1st class citizen
@@ -673,7 +687,7 @@ margin-right: 8px;
     // Done - TODO 2: If it's a group, we'll get something whacky and definitely not a phone number
     // Long term we should not need this as it should just be given in the events
     // Return obj with phone string that is a primary key including for groups, isGroup flag, and phone array if it is a group
-    getContactPhone: function() {
+    getContactPhone: function () {
 
       //console.log("getContactPhone");
 
@@ -691,14 +705,14 @@ margin-right: 8px;
           var allNumEls = groupEl.find('.zk-styled-text-small.zk-styled-text-primary.zk-styled-text-secondary');
           //console.log("allNumEls:", allNumEls, allNumEls.text());
           var arr = [];
-          for(var i = 0; i < allNumEls.length; i++) {
+          for (var i = 0; i < allNumEls.length; i++) {
             var item = $(allNumEls[i]);
             //console.log("item:", item);
 
             if (item.text()) arr.push(item.text());
           }
 
-          return {isGroup: true, phone:"group:" + arr.join(","), phones: arr}; //"group:" + arr.join(",");
+          return { isGroup: true, phone: "group:" + arr.join(","), phones: arr }; //"group:" + arr.join(",");
         }
 
         return null;
@@ -711,7 +725,7 @@ margin-right: 8px;
         //console.log("found convo");
         var contactPhone = phoneEl.text();
         //console.log("contact phone:", contactPhone);
-        return {phone: contactPhone, isGroup: false};
+        return { phone: contactPhone, isGroup: false };
       } else {
         //console.log("could not find phone number for current contact");
         return null;
@@ -719,7 +733,7 @@ margin-right: 8px;
     },
 
     // Get the ContactId from a phone number by calling Zipwhip API via ajax
-    getContactIdFromContactPhone: function(phone, callback) {
+    getContactIdFromContactPhone: function (phone, callback) {
 
       console.log("getContactIdFromContactPhone. phone:", phone);
       phone = phone.replace(/\D/g, "");  // swap non-digits for emptiness to get clean phone number. don't u love regular expressions!
@@ -736,7 +750,7 @@ margin-right: 8px;
         type: "GET",
         url: url,
         headers: headersObj,
-        success: function(data) {
+        success: function (data) {
 
           console.log("got success from ajax call for getContactIdFromContactPhone. data:", data);
 
@@ -774,13 +788,13 @@ id: 31324856907
         error: function (err) {
           console.log("got error on ajax. err:", err);
         },
-        failure: function(err) {
+        failure: function (err) {
           console.log("got failure on ajax. err:", err);
         }
       });
     },
 
-    getContactIdFromName: function(name, retItemEl, callback) {
+    getContactIdFromName: function (name, retItemEl, callback) {
 
       console.log("getContactIdFromName. name:", name);
 
@@ -796,7 +810,7 @@ id: 31324856907
         type: "GET",
         url: url,
         headers: headersObj,
-        success: function(data) {
+        success: function (data) {
 
           //console.log("got success from ajax call for getContactIdFromName. data:", data);
 
@@ -867,7 +881,7 @@ success: true
         error: function (err) {
           console.log("got error on ajax. err:", err);
         },
-        failure: function(err) {
+        failure: function (err) {
           console.log("got failure on ajax. err:", err);
         }
       });
@@ -883,7 +897,7 @@ success: true
 
     // Loop every 500ms to see if the user selected a diff conversation by watching CSS tags
     // Highly inefficient. Can't wait for core engineering to give us a native event.
-    startWatchingForConversationSelectChange: function() {
+    OldstartWatchingForConversationSelectChange: function () {
 
       console.log("startWatchingForConversationChange");
 
@@ -893,7 +907,7 @@ success: true
       // if we find nothing, we can set our selected conversation back to null
       // if we find something selected, we check if it's different than last convo
       var that = this;
-      var intervalId = setInterval(function() {
+      var intervalId = setInterval(function () {
 
         // check if we have .conversation-list-panel_hover.conversation-list-panel_selected
         var convSelEl = $('.conversation-list-panel_hover.conversation-list-panel_selected');
@@ -931,7 +945,7 @@ success: true
     },
 
     // We call this method after we've determined a new conversation has been selected
-    onNewConversationSelected: function(newPhoneObj, oldPhone) {
+    onNewConversationSelected: function (newPhoneObj, oldPhone) {
 
       var newPhone = newPhoneObj.phone;
 
@@ -943,7 +957,7 @@ success: true
       }
 
       // Now let's look up the ContactId asynchronously, and when we get it back call the load events
-      zw.shim.getContactIdFromContactPhone(newPhone, function(conversation, contactId, contact) {
+      zw.shim.getContactIdFromContactPhone(newPhone, function (conversation, contactId, contact) {
 
         // Now that we have a ContactId let's call the load events
         console.log("ok we got back from our ajax call and have a new contactid");
@@ -1013,7 +1027,7 @@ success: true
           conversation: conversation,
           contactId: contactId,
           contact: contact,
-        } );
+        });
 
         // Call Side Panel Load event
         zw.plugin.callEventListeners(zw.plugin.events.SIDE_PANEL_LOAD, null);
@@ -1025,14 +1039,14 @@ success: true
 
     // Use a setInterval to loop every n milliseconds to see when our page has loaded
     // and React created the core layout
-    startWatchingForConversationChange: function() {
+    startWatchingForConversationChange: function () {
 
       console.log("startWatchingForConversationChange");
 
       // we have to wait around for the DOM to get loaded by React, so just loop
       // until we find the DOM element we're after
       var that = this;
-      var intervalId = setInterval(function() {
+      var intervalId = setInterval(function () {
 
         //var el = $('#root');
         var el = $('.conversation-list-panel_container');
@@ -1058,7 +1072,7 @@ success: true
 
     // This continues our process of watching for conversation changes once we have our DOM element
     // of the conversation panel
-    startWatchingForConversationChangeStepTwo: function() {
+    startWatchingForConversationChangeStepTwo: function () {
       // Use the amazing DOM event of DOMSubtreeModified to see if anything changes
       // And if it does, check to see if it's a new conversation. If it's new, do lots of stuff
 
@@ -1085,11 +1099,11 @@ success: true
       const targetNode = el[0];
 
       // Options for the observer (which mutations to observe)
-      const config = { attributes: false, childList: true, subtree: true, characterData: true, };
+      const config = { attributes: false, childList: true, subtree: true, characterData: false, };
 
       // Just use callback as trigger to re-look at DOM, just debounce so don't overdo it
       // Callback function to execute when mutations are observed
-      const callback = function(mutationsList, observer) {
+      const callback = function (mutationsList, observer) {
         // do debounce
         if (timeoutId != null) {
           // we have a timeout already. cancel it.
@@ -1100,317 +1114,128 @@ success: true
         timeoutId = setTimeout(zw.shim.onWatchingForConversationChange, 500);
       }
 
-      /*
-        // Callback function to execute when mutations are observed
-            const callback = function(mutationsList, observer) {
-              // Use traditional 'for loops' for IE 11
-                for (let mutation of mutationsList) {
-                    if (mutation.type === 'childList') {
-                      //console.log('A child node has been added or removed. mutation:', mutation);
+      // Create an observer instance linked to the callback function
+      const observer = new MutationObserver(callback);
 
-                      // see if added
-                        if (mutation.addedNodes.length > 0) {
-                            console.log("Child node added. node:", mutation);
+      // Start observing the target node for configured mutations
+      observer.observe(targetNode, config);
 
-                            var mutEl = $(mutation.addedNodes[0]);
-                            console.log("mutEl:", mutEl);
+    },
 
-                            var itemEls = mutEl.find('.conversation-list-panel_hover');
-                            if (itemEls.length && itemEls.length > 0 ) {
-                                console.log("this is a conversation list item added!!. itemEls:", itemEls);
-                                for(let item of itemEls) {
-                                    console.log("item:", item);
-                                }
-                            }
+    // This is called after our DOM change event thinks we had a change, but it's called
+    // after a nice debounce so we are efficient
+    onWatchingForConversationChange: function () {
 
-                        }
-                        else if (mutation.removedNodes.length > 0) {
-                            console.log("Child node removed. node:", mutation);
+      console.log("onWatchingForConversationChange. that means debounce is done.");
 
-                            var mutEl = $(mutation.target);
-                            console.log("mutEl:", mutEl);
+      // Let's scan all conversation items, see if they are new, and if so trigger an event
+      // Leave a tag per item in the DOM so we know we've thrown an event for it
+      var convItemEls = $('.conversation-list-panel_hover');
+      for (var item of convItemEls) {
+        //console.log("item:", item);
 
-                            if (mutEl.find('.conversation-list-panel_hover').length > 0) {
-                                console.log("this is a conversation list item removed!!");
-                            }
+        let itemEl = $(item);
 
-                        }
-                        else {
-                            console.log("Did not get add or remove. huh? node:", mutation);
-                        }
-                    }
-                    else if (mutation.type === 'attributes') {
-                        console.log('The ' + mutation.attributeName + ' attribute was modified.');
-                    }
-                    else {
-                        console.log('Mutation of type:', mutation.type, mutation);
-                    }
-                }
-            };*/
+        // see if already have tag that we threw event
+        if (itemEl.attr('data-contactid')) {
+          // already fired new event for this conv item, so can ignore
+          //console.log("already handled conv item data-contactid:", itemEl.attr('data-contactid'));
+        } else {
+          // throw new event
+          //console.log("throwing new event for conv item. itemEl:", itemEl);
 
-                      // Create an observer instance linked to the callback function
-                      const observer = new MutationObserver(callback);
+          // get the name, so that we can lookup the contactId
+          var nameEl = itemEl.find(".conversation-card-container_nameContainer > .conversation-card-container_nameContainer");
+          var nameTxt = nameEl.text();
+          //console.log("nameEl:", nameEl);
 
-                      // Start observing the target node for configured mutations
-                      observer.observe(targetNode, config);
+          zw.shim.getContactIdFromName(nameTxt, itemEl, function (retItemEl, contactId, phoneNum, contact, contacts) {
+            //console.log("got callback from getContactIdFromName. contactId:", contactId, phoneNum, contacts);
 
-                      // Go ahead and call it the first time
-                      //zw.shim.onWatchingForConversationChange()
+            retItemEl.attr('data-contactid', contactId);
+            retItemEl.attr('data-phone', phoneNum);
+            //console.log("attached data items to retItemEl:", retItemEl);
 
-                      // Later, you can stop observing
-                      //observer.disconnect();
-
-                      /*
-            var target = el[0];
-            console.log("target:", target);
-// Create an observer instance
-            var observer = new MutationObserver(function( mutations ) {
-                mutations.forEach(function( mutation ) {
-                    var newNodes = mutation.addedNodes; // DOM NodeList
-                    if( newNodes !== null ) { // If there are new nodes added
-
-                      //alert('something has been changed');
-                        console.log("got mutation observer. mutation:", mutation);
-
-              // do debounce
-                        if (timeoutId != null) {
-                          // we have a timeout already. cancel it.
-                            clearTimeout(timeoutId);
-                        }
-
-              // now create setTimeout
-                        timeoutId = setTimeout(zw.shim.onWatchingForConversationChange, 1000);
-                    }
-                });
-            });
-
-// Configuration of the observer:
-            var config = {
-                attributes: true, //true,
-                childList: true,
-                characterData: true, //true
+            // now throw event
+            var evt = {
+              itemEl: retItemEl,
+              contactId: contactId,
+              phoneNum: phoneNum,
+              contact: contact,
+              contacts: contacts,
             };
+            zw.plugin.callEventListeners(zw.plugin.events.CONVERSATION_LIST_ITEM_LOAD, evt);
+          });
 
-// Pass in the target node, as well as the observer options
-            observer.observe(target, config);
-      // Later, you can stop observing
-      // observer.disconnect();
-      */
+        }
+      }
 
-      /*el.bind('DOMSubtreeModified', function(e) {
+      // let's secondarily see if a menu was shown, and if so throw off an event
+      var convItemMenuEls = $('.drop-down-menu_menu.conversation-list-panel_moreMenu');
+      if (convItemMenuEls.length > 0) {
+        console.log("convItemMenuEl:", convItemMenuEls);
 
-                console.log("looks like we got DOM modified");
+        var convItemMenuEl = $(convItemMenuEls[0]);
 
-// do debounce
-                if (timeoutId != null) {
-                  // we have a timeout already. cancel it.
-                    clearTimeout(timeoutId);
-                }
+        // let's make sure we haven't thrown an event for this yet. that can happen
+        // if a change is made to the DOM by a plugin on this menu
+        if (convItemMenuEl.attr('data-iseventthrown') == "yes") {
+          console.log("load evt already thrown for this menu. ignoring...");
+        } else {
 
-// now create setTimeout
-                timeoutId = setTimeout(zw.shim.onWatchingForConversationChange, 1000);
-            });*/
-},
-
-  // This is called after our DOM change event thinks we had a change, but it's called
-  // after a nice debounce so we are efficient
-  onWatchingForConversationChange: function() {
-
-    console.log("onWatchingForConversationChange. that means debounce is done.");
-
-    // Let's scan all conversation items, see if they are new, and if so trigger an event
-    // Leave a tag per item in the DOM so we know we've thrown an event for it
-    var convItemEls = $('.conversation-list-panel_hover');
-    for (var item of convItemEls) {
-      //console.log("item:", item);
-
-      let itemEl = $(item);
-
-      // see if already have tag that we threw event
-      if (itemEl.attr('data-contactid')) {
-        // already fired new event for this conv item, so can ignore
-        //console.log("already handled conv item data-contactid:", itemEl.attr('data-contactid'));
-      } else {
-        // throw new event
-        //console.log("throwing new event for conv item. itemEl:", itemEl);
-
-        // get the name, so that we can lookup the contactId
-        var nameEl = itemEl.find(".conversation-card-container_nameContainer > .conversation-card-container_nameContainer");
-        var nameTxt = nameEl.text();
-        //console.log("nameEl:", nameEl);
-
-        zw.shim.getContactIdFromName(nameTxt, itemEl, function(retItemEl, contactId, phoneNum, contact, contacts) {
-          //console.log("got callback from getContactIdFromName. contactId:", contactId, phoneNum, contacts);
-
-          retItemEl.attr('data-contactid', contactId);
-          retItemEl.attr('data-phone', phoneNum);
-          //console.log("attached data items to retItemEl:", retItemEl);
+          convItemMenuEl.attr('data-iseventthrown', "yes");
+          let itemEl = convItemMenuEl.parent('.conversation-list-panel_hover');
+          var contactId = itemEl.attr('data-contactid');
+          var phoneNum = itemEl.attr('data-phone');
 
           // now throw event
           var evt = {
-            itemEl: retItemEl,
+            itemEl: itemEl,
+            itemMenuEl: convItemMenuEl,
             contactId: contactId,
             phoneNum: phoneNum,
-            contact: contact,
-            contacts: contacts,
           };
-          zw.plugin.callEventListeners(zw.plugin.events.CONVERSATION_LIST_ITEM_LOAD, evt);
-        });
+          zw.plugin.callEventListeners(zw.plugin.events.CONVERSATION_LIST_ITEM_MENU_LOAD, evt);
 
+        }
       }
-    }
 
-    // let's secondarily see if a menu was shown, and if so throw off an event
-    var convItemMenuEls = $('.drop-down-menu_menu.conversation-list-panel_moreMenu');
-    if (convItemMenuEls.length > 0) {
-      console.log("convItemMenuEl:", convItemMenuEls);
+      // 3rd, let's see if any conversation got selected
+      // check if we have .conversation-list-panel_hover.conversation-list-panel_selected
+      var convSelEl = $('.conversation-list-panel_hover.conversation-list-panel_selected');
 
-      var convItemMenuEl = $(convItemMenuEls[0]);
+      if (convSelEl.length > 0) {
+        // we found a selected element.
+        //console.log("found selected conversation. convSelEl:", convSelEl);
 
-      // let's make sure we haven't thrown an event for this yet. that can happen
-      // if a change is made to the DOM by a plugin on this menu
-      if (convItemMenuEl.attr('data-iseventthrown') == "yes") {
-        console.log("load evt already thrown for this menu. ignoring...");
+        // we need to get the phone number of this convo to determine if we've changed convos
+        var newPhoneObj = zw.shim.getContactPhone();
+
+        if (newPhoneObj.phone != zw.shim.lastConvSelPhone) {
+
+          //console.log("newPhone did not equal lastConvSelPhone. new convo! old:", zw.shim.lastConvSelPhone, "new:", newPhone);
+
+          var oldPhone = zw.shim.lastConvSelPhone;
+          zw.shim.lastConvSelPhone = newPhoneObj.phone;
+
+          zw.shim.onNewConversationSelected(newPhoneObj, oldPhone);
+
+        } else {
+
+          // this is the same convo. we can punt.
+          //console.log("selected conversation didn't change. ignoring...");
+        }
+
       } else {
-
-        convItemMenuEl.attr('data-iseventthrown', "yes");
-        let itemEl = convItemMenuEl.parent('.conversation-list-panel_hover');
-        var contactId = itemEl.attr('data-contactid');
-        var phoneNum = itemEl.attr('data-phone');
-
-        // now throw event
-        var evt = {
-          itemEl: itemEl,
-          itemMenuEl: convItemMenuEl,
-          contactId: contactId,
-          phoneNum: phoneNum,
-        };
-        zw.plugin.callEventListeners(zw.plugin.events.CONVERSATION_LIST_ITEM_MENU_LOAD, evt);
-
+        // we found nothing, set lastContactPhone to null
+        //console.log("setting last selected conversation to null");
+        zw.shim.lastConvSelPhone = null;
       }
-    }
 
-  },
+    },
 
-  // This is called after our DOM change event thinks we had a change, but it's called
-  // after a nice debounce so we are efficient
-  OldonWatchingForConversationChange: function() {
-
-    console.log("onWatchingForConversationChange. that means debounce is done.");
-
-    var newPhone = zw.shim.getContactPhone();
-
-    if (newPhone != zw.shim.lastContactPhone) {
-
-      console.log("newPhone did not equal oldPhone. new convo!");
-
-      var oldPhone = zw.shim.lastContactPhone;
-      zw.shim.lastContactPhone = newPhone;
-
-      console.log("looks like we have a new phone num for the contact, thus this is a new conversation. old:", oldPhone, "new:", newPhone);
-
-      // Now let's look up the ContactId asynchronously, and when we get it back call the load events
-      zw.shim.getContactIdFromContactPhone(newPhone, function(conversation, contactId) {
-
-        // Now that we have a ContactId let's call the load events
-        console.log("ok we got back from our ajax call and have a new contactid");
-
-        // Before we call the event listeners for load events, let's create our Plugin regions.
-        // These would be created by default by React once this is a 1st class citizen, but for now
-        // let's sort of lazy load ensure that our plugin region divs are created
-
-        // Create Compose Box Button Bar plugin region, if not created
-        var composeBoxBtnBarPluginEl = $('.send-message-panel_row .plugin-composebox-btnbar');
-        if (composeBoxBtnBarPluginEl.length > 0) {
-          // it's already there. leave alone.
-          console.log(".plugin-composebox-btnbar was already there. leaving alone.");
-        } else {
-          // it's not there. create it.
-          console.log(".plugin-composebox-btnbar was NOT there. creating...");
-          var rowEl = $('.send-message-panel_row');
-          composeBoxBtnBarPluginEl = $('<div class="plugin-composebox-btnbar"></div>');
-          rowEl.append(composeBoxBtnBarPluginEl);
-        }
-
-        // Make sure the signature toggle icon has class name of send-message-panel_iconContainer
-        // so that it adds padding-right like all the other buttons
-        var sigBtnEl = composeBoxBtnBarPluginEl.parent().find('.signature-toggle_image');
-        sigBtnEl.css("margin-right", "10px");
-
-        // Create Compose Box Top Region plugin region, if not created
-        var composeTopRegionPluginEl = $('.plugin-composebox-topregion');
-        if (composeTopRegionPluginEl.length > 0) {
-          // it's already there. leave alone.
-          console.log(".plugin-composebox-topregion was already there. leaving alone.");
-        } else {
-          // it's not there. create it.
-          console.log(".plugin-composebox-topregion was NOT there. creating...");
-
-          // let's show a region above the compose box
-          var mainEl = $('.zw-default-div-style.compose-box-new');
-
-          var divEl = $('<div class="plugin-composebox-topregion zk-styled-text-base"></div>');
-          //divEl.click(this.onTopRegionClick.bind(this));
-          this.composeBoxTopRegionEl = divEl;
-
-          mainEl.parent().prepend(divEl);
-          console.log("prepended compose top region");
-        }
-
-        // Call Compose Box Load event
-        var composeTextAreaEl = $(".zk-text-editor_input.zk-text-editor_content.compose-box_textInput");
-        zw.plugin.callEventListeners(zw.plugin.events.COMPOSE_BOX_LOAD, {
-          composeTextAreaEl: composeTextAreaEl,
-          composeBoxBtnBarPluginEl: composeBoxBtnBarPluginEl,
-          composeTopRegionPluginEl: composeTopRegionPluginEl,
-          phone: newPhone,
-          oldPhone: oldPhone,
-          conversation: conversation,
-          contactId: contactId
-        } );
-
-        // Call Side Panel Load event
-        zw.plugin.callEventListeners(zw.plugin.events.SIDE_PANEL_LOAD, null);
-
-      });
-
-    } else {
-      console.log("newPhone = oldPhone. nothing to do here.");
-    }
-
-    /* OLD
-    // Watch for Compose Box showing up
-            setInterval(function() {
-                var composeEl = $(".zk-text-editor_input.zk-text-editor_content.compose-box_textInput");
-
-                if (composeEl.length > 0) {
-                  //console.log("found compose box. composeEl:", composeEl);
-
-                  // if has a data-isLoaded tag then we already called onComposeBoxLoad() so ignore
-                    if (composeEl.attr('data-isloaded')) {
-                      // ignore
-                      //console.log("looks like already had this compose box handled");
-                    } else {
-                      //console.log("looks like new compose box. adding data field to track we know it.");
-                        composeEl.attr('data-isloaded', true);
-
-//obj.onComposeBoxLoad(composeEl);
-
-                        zw.plugins.callEventListeners(zw.plugins.events.COMPOSE_BOX_LOAD, composeEl);
-
-// attach keystroke events
-                        composeEl.on("input propertychange", obj.onComposeBoxKeypress.bind(obj));
-                    }
-
-                } else {
-                  //console.log("looked for compose box, but did not find it.");
-                }
-
-            }, 2000);
-            */
-                },
+  }
 }
-} 
 
 // store as global
 window["zw"] = zw;
@@ -1422,24 +1247,26 @@ console.log("Plugin - Boot.js ran");
 console.log("Plugin - Now checking app store for installed plugins for this user...");
 
 // Load all of the plugins 
-function loadAllBots(bots) {
+function loadAllPlugins(plugins) {
   zw.shim.onLoad();
   console.log("Loading Plugin scripts");
 
   // Manual override of bot list
-  bots = [{
+  /*
+  plugins = [{
     urls: {
-      jsUrl: "http://localhost/ZwHumanDate/plugin.js",
+      jsUrl: "http://localhost:8080/ZwHumanDate/plugin.js",
     },
     metadata: {
       name: "Human Date Time",
     }
 
   }]
+  */
 
-  bots.forEach(function(bot) {
-    console.log(bot);
-    if (bot && bot.urls && bot.urls.jsUrl) {
+  plugins.forEach(function (plugin) {
+    console.log(plugin);
+    if (plugin && plugin.urls && plugin.urls.jsUrl) {
 
       /* // Approach for pastebin
       var script = document.createElement('script');
@@ -1449,36 +1276,36 @@ function loadAllBots(bots) {
       document.getElementsByTagName('head')[0].appendChild(script);
       console.log("Plugin Loaded - ", bot.metadata.name);
       */
-      
-      
+
+
       // cache buster
       let ts = new Date().getTime();
-      let url = bot.urls.jsUrl + "?ts=" + ts;
+      let url = plugin.urls.jsUrl + "?ts=" + ts;
       console.log("Plugin - Url being retrieved:", url);
       // ajax retrieve the document
       $.ajax({
         type: "GET",
         url: url,
-        success: function(data) {
+        success: function (data) {
           if (data) {
 
             // Put the script inline in a script tag in the DOM to avoid
             // any caching issues and to avoid meta-type issues
             var script = document.createElement('script');
-            script.text = "//" + bot.urls.jsUrl + "\n\n" + data;
+            script.text = "//" + plugin.urls.jsUrl + "\n\n" + data;
             //script.setAttribute('src', bot.urls.jsUrl);
             //script.setAttribute('type', 'text/javascript');
             document.getElementsByTagName('head')[0].appendChild(script);
-            console.log("Plugin Loaded - ", bot.metadata.name);
+            console.log("Plugin Loaded - ", plugin.metadata.name);
           }
         },
         error: function (err) {
           console.log("got error on ajax. err:", err);
         },
       });
-      
 
-      
+
+
     }
   })
 }
@@ -1486,14 +1313,19 @@ function loadAllBots(bots) {
 
 // Check for existence of jquery
 // setInterval() watch for $ not being null
-let interval = setInterval(function() {
-  console.log("Loop", typeof($));
+var interval = setInterval(function () {
+  console.log("Loop", typeof ($));
   if ($) {
     clearInterval(interval);
+
+    //loadAllPlugins();
+
+
     $.ajax({
       type: "GET",
       url: "https://plugins.zw.wagar.cc/line/" + zw.getLine(),
-      success: function(data) {
+      success: function (data) {
+        console.log("data:", data);
         if (data && 'plugins' in data) {
           loadAllPlugins(data.plugins);
         }
@@ -1502,9 +1334,12 @@ let interval = setInterval(function() {
         console.log("got error on ajax. err:", err);
       },
     });
-  }
-},  500);
 
+
+  }
+}, 500);
+
+/*
 function loadAllPlugins(plugins) {
   zw.shim.onLoad();
   console.log("Loading Plugin scripts");
@@ -1519,3 +1354,4 @@ function loadAllPlugins(plugins) {
     }
   })
 }
+*/
