@@ -1,0 +1,11 @@
+{
+    "name": "zw-plugin-bootstrap",
+    "version": "1.0.0",
+    "scripts": {
+        "build": "babel boot.js -d lib"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.10.1",
+        "@babel/core": "^7.10.2"
+    }
+}
