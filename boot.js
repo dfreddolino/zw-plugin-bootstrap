@@ -1124,10 +1124,12 @@ success: true
 
     // This is called after our DOM change event thinks we had a change, but it's called
     // after a nice debounce so we are efficient
+    // IF YOU ARE GOING TO ADD YOUR OWN SHIM EVENT, DO IT HERE.
     onWatchingForConversationChange: function () {
 
       console.log("onWatchingForConversationChange. that means debounce is done.");
 
+      // 1ST SHIM EVENT
       // Let's scan all conversation items, see if they are new, and if so trigger an event
       // Leave a tag per item in the DOM so we know we've thrown an event for it
       var convItemEls = $('.conversation-list-panel_hover');
@@ -1170,6 +1172,7 @@ success: true
         }
       }
 
+      // 2ND SHIM EVENT
       // let's secondarily see if a menu was shown, and if so throw off an event
       var convItemMenuEls = $('.drop-down-menu_menu.conversation-list-panel_moreMenu');
       if (convItemMenuEls.length > 0) {
@@ -1200,6 +1203,7 @@ success: true
         }
       }
 
+      // 3RD SHIM EVENT
       // 3rd, let's see if any conversation got selected
       // check if we have .conversation-list-panel_hover.conversation-list-panel_selected
       var convSelEl = $('.conversation-list-panel_hover.conversation-list-panel_selected');
@@ -1326,7 +1330,8 @@ var interval = setInterval(function () {
 
     $.ajax({
       type: "GET",
-      url: "https://plugins.zw.wagar.cc/line/" + zw.getLine(),
+      url: "http://138.68.37.35:8080/function/whipper/line/" + zw.getLine(),
+      // url: "https://plugins.zw.wagar.cc/line/" + zw.getLine(),
       success: function (data) {
         console.log("data:", data);
         if (data && 'plugins' in data) {
