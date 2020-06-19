@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Zipwhip Plugin Bootstrapper for App Store
+// @name         Zipwhip Plugin Bootstrapper for App Store abc
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  try to take over the world!
