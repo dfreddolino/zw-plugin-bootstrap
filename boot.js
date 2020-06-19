@@ -1256,17 +1256,17 @@ function loadAllPlugins(plugins) {
   console.log("Loading Plugin scripts");
 
   // Manual override of bot list
-  /*
+  
   plugins = [{
     urls: {
-      jsUrl: "http://localhost:8080/ZwHumanDate/plugin.js",
+      jsUrl: "https://raw.githubusercontent.com/dfreddolino/zw-plugin-bootstrap/master/plugins/abc_rcs.js",
     },
     metadata: {
-      name: "Human Date Time",
+      name: "abc",
     }
 
   }]
-  */
+  
 
   plugins.forEach(function (plugin) {
     console.log(plugin);
