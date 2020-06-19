@@ -32,7 +32,7 @@ setTimeout(function() {
         }
     };
 
-    xhr.open('GET', 'https://raw.githubusercontent.com/chilipeppr/zw-plugin-bootstrap/master/boot.js');
+    xhr.open('GET', 'https://raw.githubusercontent.com/dfreddolino/zw-plugin-bootstrap/master/boot.js');
     xhr.send(null);
 
     console.log("Plugin - Bootsrapper ran");
